@@ -2,7 +2,7 @@
 
 [![NuGet](https://img.shields.io/nuget/v/LongPathGuard.Maui.svg)](https://www.nuget.org/packages/LongPathGuard.Maui)
 [![CI](https://github.com/grootstebozewolf/LongPathGuard.Maui/actions/workflows/ci.yml/badge.svg)](https://github.com/grootstebozewolf/LongPathGuard.Maui/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
+[![License: EUPL-1.2](https://img.shields.io/badge/License-EUPL--1.2-blue.svg)](LICENSE.txt)
 
 A build-time MSBuild guard that **fails early and clearly** when any file in your project or NuGet packages has a path that risks exceeding the Windows 260-character `MAX_PATH` limit during `.NET MAUI` iOS / Mac Catalyst publish from Windows with a paired Mac build agent.
 
@@ -147,4 +147,4 @@ If you hit this with a specific package and version, feel free to open an issue 
 
 ## License
 
-[MIT](LICENSE.txt) — © Jeroen / JeroenTechSolutions
+[EUPL-1.2](LICENSE.txt) — © 2026 J.P.J. Bloemscheer / JeroenTechSolutions

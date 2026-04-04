@@ -8,7 +8,7 @@
     <Company>JeroenTechSolutions</Company>
     <Description>Prevents MSB3026 long path errors in .NET MAUI iOS / MacCatalyst builds from Windows by scanning for risky file paths in any NuGet package.</Description>
     <PackageTags>maui;ios;longpath;msbuild;build-guard;windows</PackageTags>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseExpression>EUPL-1.2</PackageLicenseExpression>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeBuildOutput>false</IncludeBuildOutput>
   </PropertyGroup>
