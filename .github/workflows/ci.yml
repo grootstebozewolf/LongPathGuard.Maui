@@ -72,11 +72,9 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Push to NuGet.org
-        run: >
-          dotnet nuget push ./artifacts/*.nupkg
-          --api-key ${{ secrets.NUGET_API_KEY }}
-          --source https://api.nuget.org/v3/index.json
-          --skip-duplicate
+        run: |
+          $pkg = (Get-ChildItem -Path ./artifacts -Filter *.nupkg | Select-Object -First 1).FullName
+          dotnet nuget push $pkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
 
   publish-github:
     name: Publish to GitHub Packages
@@ -108,4 +106,6 @@ jobs:
           "https://nuget.pkg.github.com/grootstebozewolf/index.json"
 
       - name: Push to GitHub Packages
-        run: dotnet nuget push ./artifacts/*.nupkg --source "github"
+        run: |
+          $pkg = (Get-ChildItem -Path ./artifacts -Filter *.nupkg | Select-Object -First 1).FullName
+          dotnet nuget push $pkg --source "github" --skip-duplicate
