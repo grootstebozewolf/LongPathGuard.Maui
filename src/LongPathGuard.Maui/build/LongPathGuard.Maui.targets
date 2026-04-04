@@ -18,21 +18,29 @@
 						<LongPathFiles Include="@(AllFiles)" Condition="$( [System.String]::Copy('%(FullPath)').Length ) &gt; $(MaxSafePathLength)" />
 				</ItemGroup>
 
-				<Error Text="LongPathGuard.Maui FAILURE:
+							<Error Text="LongPathGuard.Maui FAILURE:
 
-One or more files exceed the safe Windows path length.
-This causes MSB3026 errors during MAUI iOS/MacCatalyst publish from Windows + paired Mac.
+				One or more files exceed the safe Windows path length ($(MaxSafePathLength) characters).
+				This commonly triggers MSB3026 or path-too-long errors when building MAUI iOS or MacCatalyst targets from Windows.
 
-Offending files:
-@(LongPathFiles->'%(FullPath)', ';&#10;')
+				Offending files:
+				@(LongPathFiles->'%(FullPath)', ';&#10;')
 
-Solution root: $(MSBuildProjectDirectory) ($(MSBuildProjectDirectory.Length) chars)
+				Current solution root:
+				$(MSBuildProjectDirectory)
+				($(MSBuildProjectDirectory.Length) characters)
 
-Fix options:
-1. Move solution to short path e.g. C:\com\att\Waldo2\ (verified)
-2. Enable long paths: HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled = 1 (DWORD) + reboot
+				Recommended fixes:
 
-Microsoft docs: https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation"
-							Condition="'@(LongPathFiles)' != ''" />
+				1. Move the solution folder to a shorter path closer to the drive root
+					 (e.g. C:\dev\MyProject\ or D:\src\MyProject\).
+
+				2. Enable Windows long path support:
+					 - Set the registry key:
+						 HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled = 1 (DWORD)
+					 - Reboot the machine
+
+				This guard runs early during Restore / Build / MauiPrepareForBuild to prevent cryptic failures later in the iOS/MacCatalyst pipeline."
+										Condition="'@(LongPathFiles)' != ''" />
 		</Target>
 </Project>
