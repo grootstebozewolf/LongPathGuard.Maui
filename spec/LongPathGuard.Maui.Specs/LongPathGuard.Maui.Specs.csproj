@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="*" />
     <PackageReference Include="Reqnroll.MsTest" Version="*" />
     <PackageReference Include="Reqnroll.Tools.MsBuild.Generation" Version="*" />
     <PackageReference Include="MSTest.TestAdapter" Version="*" />

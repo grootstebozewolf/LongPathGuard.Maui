@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <Target Name="LongPathGuard" BeforeTargets="Build;Publish;MauiPrepareForBuild;Restore"
-          Condition="'$(LongPathGuardEnabled)' == 'true' AND ('$(TargetFramework)' Contains('ios') OR '$(TargetFramework)' Contains('maccatalyst'))">
+          Condition="'$(LongPathGuardEnabled)' == 'true' AND ($(TargetFramework.Contains('ios')) OR $(TargetFramework.Contains('maccatalyst')))">
 
     <Message Text="=== LongPathGuard.Maui: Scanning for Windows MAX_PATH risks ===" Importance="High" />
 
