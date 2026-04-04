@@ -39,7 +39,7 @@ The Mac itself never sees the problem; the `MAX_PATH` limit is purely a Windows 
 ## Installation
 
 ```xml
-<PackageReference Include="LongPathGuard.Maui" Version="1.0.0" />
+<PackageReference Include="LongPathGuard.Maui" Version="1.0.1" />
 ```
 
 That's it. The guard runs automatically on every `Build`, `Publish`, and `Restore` for `ios` and `maccatalyst` target frameworks. No code changes required.
