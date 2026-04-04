@@ -1,0 +1,38 @@
+<Project>
+  <PropertyGroup>
+    <LongPathGuardEnabled Condition="'$(LongPathGuardEnabled)' == ''">true</LongPathGuardEnabled>
+    <MaxSafePathLength Condition="'$(MaxSafePathLength)' == ''">200</MaxSafePathLength>
+  </PropertyGroup>
+
+  <Target Name="LongPathGuard" BeforeTargets="Build;Publish;MauiPrepareForBuild;Restore"
+          Condition="'$(LongPathGuardEnabled)' == 'true' AND ('$(TargetFramework)' Contains('ios') OR '$(TargetFramework)' Contains('maccatalyst'))">
+
+    <Message Text="=== LongPathGuard.Maui: Scanning for Windows MAX_PATH risks ===" Importance="High" />
+
+    <ItemGroup>
+      <AllFiles Include="$(MSBuildProjectDirectory)\**\*" />
+      <AllFiles Include="$(NuGetPackageRoot)\**\*" Condition="'$(NuGetPackageRoot)' != ''" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <LongPathFiles Include="@(AllFiles)" Condition="$( [System.String]::Copy('%(FullPath)').Length ) &gt; $(MaxSafePathLength)" />
+    </ItemGroup>
+
+    <Error Text="LongPathGuard.Maui FAILURE:
+
+One or more files exceed the safe Windows path length.
+This causes MSB3026 errors during MAUI iOS/MacCatalyst publish from Windows + paired Mac.
+
+Offending files:
+@(LongPathFiles->'%(FullPath)', ';&#10;')
+
+Solution root: $(MSBuildProjectDirectory) ($(MSBuildProjectDirectory.Length) chars)
+
+Fix options:
+1. Move solution to short path e.g. C:\com\att\Waldo2\ (verified)
+2. Enable long paths: HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled = 1 (DWORD) + reboot
+
+Microsoft docs: https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation"
+          Condition="'@(LongPathFiles)' != ''" />
+  </Target>
+</Project>
