@@ -10,6 +10,8 @@
     <PackageTags>maui;ios;longpath;msbuild;build-guard;windows</PackageTags>
     <PackageLicenseExpression>EUPL-1.2</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/grootstebozewolf/LongPathGuard.Maui</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NoWarn>$(NoWarn);NU5128</NoWarn>
