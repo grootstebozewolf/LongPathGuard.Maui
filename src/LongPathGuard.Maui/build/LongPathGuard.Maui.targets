@@ -2,6 +2,10 @@
 		<PropertyGroup>
 				<LongPathGuardEnabled Condition="'$(LongPathGuardEnabled)' == ''">true</LongPathGuardEnabled>
 				<MaxSafePathLength Condition="'$(MaxSafePathLength)' == ''">200</MaxSafePathLength>
+				<!-- Release pipelines compile generated C# in-memory / under obj; those files
+				     are not copied to the iOS/MacCatalyst payload and are not the MSB3026
+				     native-asset case this guard exists for. -->
+				<LongPathGuardSkipGenerated Condition="'$(LongPathGuardSkipGenerated)' == ''">true</LongPathGuardSkipGenerated>
 		</PropertyGroup>
 
 		<Target Name="LongPathGuard" BeforeTargets="Build;Publish;MauiPrepareForBuild;Restore"
@@ -10,8 +14,20 @@
 				<Message Text="=== LongPathGuard.Maui: Scanning for Windows MAX_PATH risks ===" Importance="High" />
 
 				<ItemGroup>
-						<AllFiles Include="$(MSBuildProjectDirectory)\**\*" />
+						<_LpgProjectExclude Include="$(MSBuildProjectDirectory)\bin\**\*" />
+						<_LpgProjectExclude Include="$(MSBuildProjectDirectory)\obj\**\*" />
+						<_LpgProjectExclude Include="$(MSBuildProjectDirectory)\**\*.g.cs" Condition="'$(LongPathGuardSkipGenerated)' == 'true'" />
+						<_LpgProjectExclude Include="$(MSBuildProjectDirectory)\**\*.g.i.cs" Condition="'$(LongPathGuardSkipGenerated)' == 'true'" />
+						<_LpgProjectExclude Include="$(MSBuildProjectDirectory)\**\*.g.shared.cs" Condition="'$(LongPathGuardSkipGenerated)' == 'true'" />
+
+						<AllFiles Include="$(MSBuildProjectDirectory)\**\*" Exclude="@(_LpgProjectExclude)" />
 						<AllFiles Include="$(NuGetPackageRoot)\**\*" Condition="'$(NuGetPackageRoot)' != ''" />
+				</ItemGroup>
+
+				<ItemGroup Condition="'$(LongPathGuardSkipGenerated)' == 'true' AND '@(AllFiles)' != ''">
+						<AllFiles Remove="@(AllFiles)" Condition="$([System.String]::Copy('%(Filename)%(Extension)').EndsWith('.g.cs'))" />
+						<AllFiles Remove="@(AllFiles)" Condition="$([System.String]::Copy('%(Filename)%(Extension)').EndsWith('.g.i.cs'))" />
+						<AllFiles Remove="@(AllFiles)" Condition="$([System.String]::Copy('%(Filename)%(Extension)').EndsWith('.g.shared.cs'))" />
 				</ItemGroup>
 
 				<ItemGroup>
