@@ -39,7 +39,7 @@ The Mac itself never sees the problem; the `MAX_PATH` limit is purely a Windows 
 ## Installation
 
 ```xml
-<PackageReference Include="LongPathGuard.Maui" Version="1.0.1" />
+<PackageReference Include="LongPathGuard.Maui" Version="1.1.0" />
 ```
 
 That's it. The guard runs automatically on every `Build`, `Publish`, and `Restore` for `ios` and `maccatalyst` target frameworks. No code changes required.
@@ -105,6 +105,7 @@ Both guards are controlled via MSBuild properties you can override in your `.csp
 |---|---|---|
 | `LongPathGuardEnabled` | `true` | Set to `false` to disable the guard entirely |
 | `MaxSafePathLength` | `200` | Files with a full path longer than this (in characters) are flagged. Lower this if your build agent uses especially deep temp folders. |
+| `LongPathGuardSkipGenerated` | `true` | Skip auto-generated C# scaffolding (`obj\`, `bin\`, `*.g.cs`, `*.g.i.cs`, `*.g.shared.cs`). Release pipelines compile that scaffolding; they do not copy it to the iOS/MacCatalyst payload. Native assets in NuGet packages are still scanned. Set to `false` to include generated files. |
 
 ### Disable for a specific project
 
@@ -128,12 +129,13 @@ Both guards are controlled via MSBuild properties you can override in your `.csp
 
 The package ships a single MSBuild `.targets` file (no runtime DLL). When imported it adds a `LongPathGuard` target that runs `BeforeTargets="Build;Publish;MauiPrepareForBuild;Restore"` for any `ios` or `maccatalyst` target framework:
 
-1. Collects all files under `$(MSBuildProjectDirectory)` and `$(NuGetPackageRoot)`.
-2. Filters to any file whose `%(FullPath)` exceeds `$(MaxSafePathLength)` characters.
-3. If any offending files are found, emits an MSBuild `Error` with the full list and the two fix options.
-4. If no offending files are found, the target completes silently and the build continues normally.
+1. Collects files under `$(MSBuildProjectDirectory)` and `$(NuGetPackageRoot)`.
+2. Skips auto-generated scaffolding by default (`obj\`, `bin\`, `*.g.cs` / `*.g.i.cs` / `*.g.shared.cs`). A Release pipeline does not ship that C#; the MSB3026 failure is native assets (shaders, XCFrameworks) copied toward the Mac.
+3. Filters remaining files whose `%(FullPath)` exceeds `$(MaxSafePathLength)` characters.
+4. If any offending files are found, emits an MSBuild `Error` with the full list and the two fix options.
+5. If no offending files are found, the target completes silently and the build continues normally.
 
-The check is **vendor-neutral** — it does not single out any specific package. Any NuGet package with long filenames will be caught.
+The check is **vendor-neutral** — it does not single out any specific package. Any NuGet package with long native filenames will be caught.
 
 ---
 
