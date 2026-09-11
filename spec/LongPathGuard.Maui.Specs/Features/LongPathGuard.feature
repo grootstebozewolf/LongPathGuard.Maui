@@ -25,3 +25,18 @@ Scenario: Guard can be disabled with MSBuild property
   Given LongPathGuardEnabled is set to false
   When long path files are present
   Then the guard does not run and build proceeds normally
+
+Scenario: Guard skips auto-generated scaffolding on a Release build
+  Given the project sits in a deep folder without long source files
+  And LongPathGuard.Maui package is referenced
+  And an auto-generated scaffolding file with a long path exists under obj
+  When I run dotnet build -f net9.0-ios -c Release
+  Then the build succeeds without long-path errors
+
+Scenario: Guard still flags a long native asset in the NuGet cache on a Release build
+  Given the project sits in a deep folder without long source files
+  And LongPathGuard.Maui package is referenced
+  And a long native asset exists in the NuGet package cache
+  When I run dotnet build -f net9.0-ios -c Release
+  Then the build fails
+  And the error clearly lists the offending long file paths
