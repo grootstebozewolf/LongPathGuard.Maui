@@ -17,7 +17,7 @@ Scenario: Guard detects long paths and fails with helpful message
   And the message explains the two workarounds: short solution path or enable LongPathsEnabled
 
 Scenario: Guard stays silent on short safe paths
-  Given the solution is in a short path like C:\com\github\grootstebozewolf\LongPathGuard.Maui
+  Given the solution is in a short path
   When I build the iOS target
   Then the build succeeds without long-path errors
 
